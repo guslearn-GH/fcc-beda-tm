@@ -23,21 +23,25 @@ app.get("/api/hello", function (req, res) {
   res.json({ greeting: "hello API" });
 });
 app.get("/api/:DateString", function (req, res) {
-  var fullDate = req.params.DateString.split("-");
-  console.log(fullDate);
-  var returnDate;
-  if (fullDate.length == 1) {
-    returnDate = new Date(Number(req.params.DateString));
+  var dateParam = req.params.DateString;
+  var fullDate;
+  if (!req.params.DateString) {
+    fullDate = new Date();
+  } else if (isNaN(dateParam)) {
+    fullDate = new Date(dateParam);
   } else {
-    returnDate = new Date(
-      Number(fullDate[0]),
-      Number(fullDate[1] - 1),
-      Number(fullDate[2])
-    );
-    //var utcString = returnDate.getUTCDay()
+    fullDate = new Date(Number(dateParam));
   }
-  console.log(returnDate);
-  res.json({ unix: returnDate.getTime(), utc: returnDate.toUTCString() });
+  console.log(fullDate);
+  if (fullDate instanceof Date && !isNaN(fullDate)) {
+    res.json({ unix: fullDate.getTime(), utc: fullDate.toUTCString() });
+  } else {
+    res.json({ error: "Invalid Date" });
+  }
+});
+app.get("/api/", function (req, res) {
+  fullDate = new Date();
+  res.json({ unix: fullDate.getTime(), utc: fullDate.toUTCString() });
 });
 
 // Listen on port set in environment variable or default to 3000
