@@ -22,20 +22,22 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({ greeting: "hello API" });
 });
-app.get("/api/:DateString", function (req, res) {
-  var dateParam = req.params.DateString;
+app.get("/api/:date?", function (req, res) {
+  var dateParam = req.params.date;
   var fullDate;
-  if (!req.params.DateString) {
+  if (!dateParam) {
     fullDate = new Date();
   } else if (isNaN(dateParam)) {
     fullDate = new Date(dateParam);
   } else {
     fullDate = new Date(Number(dateParam));
   }
-  console.log(fullDate);
+  
   if (fullDate instanceof Date && !isNaN(fullDate)) {
+    console.log(JSON.stringify({ unix: fullDate.getTime(), utc: fullDate.toUTCString() }));
     res.json({ unix: fullDate.getTime(), utc: fullDate.toUTCString() });
   } else {
+    console.log(JSON.log({ error: "Invalid Date" }))
     res.json({ error: "Invalid Date" });
   }
 });
